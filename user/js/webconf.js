@@ -1,4 +1,4 @@
-const urlBase = "naosei.com"
+const urlBase = ""
 
 window.onload = function(){
 
@@ -19,7 +19,7 @@ window.onload = function(){
                 const name= document.getElementById('txtName').value
                 const email= document.getElementById('txtEmail').value
                 const url_base = 'https://fcawebbook.herokuapp.com'
-                return fetch(`${url_base}/conferences/1/participants/${email}`,{
+                return fetch(`${url_base}/helpdesk/1/participants/${email}`,{
                     headers: {"Content-Type" : "application/x-www-form-urlencoded"},
                     method: "POST",
                     body: `nomeparticipant=${name}`
@@ -85,7 +85,6 @@ window.onload = function(){
         const btnView = document.getElementsByClassName("viewAuthor")
         for(let i = 0; i < btnView.length; i++){
             btnView[i].addEventListener("click", () => {
-                console.log("NIGGER")
                 for(const author of authors){
                     if(author.idAuthor == btnView[i].getAttribute("id")){
                         // Janela Modal 
@@ -123,28 +122,68 @@ window.onload = function(){
             
             }
             renderSponsors.innerHTML = txtSponsors
-    }) ()
-
-
-    // Envio de Mensagem 
-    const constactForm = document.getElementById("contactForm")
-    constactForm.addEventListener("submit", async () => {
-        const name = document.getElementById("name").value
-        const email = document.getElementById("email").value
-        const message = document.getElementById("message").value
-        const response = await fetch(`${urlBase}/contacts/emails`, {
-            headers:{
-                "Content-Type": "application/x-www-form-urlencoded"
-            },
-            method: "POST",
-            body: `email=${email}&name=${name}&subject=${message}`
-        })
-        const result = await response.json()
-        if(result.value.success) {
-            swal('Envio de mensagem', result.value.message.pt, 'success')
-        } else {
-            swal({title:'Envio de mensagem', text:'Mensagem não enviada', icon:'error'})
-        }
+        }) ()
+        
+        
+    }
+    
+// Envio de Mensagem (Contacts) 
+const constactForm = document.getElementById("sendMessageButton")
+constactForm.addEventListener("click", async () => {
+    const name = document.getElementById("name").value
+    const email = document.getElementById("email").value
+    const message = document.getElementById("message").value
+    const response = await fetch(`${urlBase}/contacts/emails`, {
+        headers:{
+            "Content-Type": "application/x-www-form-urlencoded"
+        },
+        method: "POST",
+        body: `email=${email}&name=${name}&subject=${message}`
     })
-}
+    const result = await response.json()
+    if(result.value.success) {
+        swal({title:'Envio de mensagem', text:result.value.message.pt, icon:'success'})
+    } else {
+        swal({title:'Envio de mensagem', text:'Mensagem não enviada', icon:'error'})
+    }
+})
 
+const btnLogin = document.getElementById("btnLogin")
+btnLogin.addEventListener("click", () => {
+    swal({
+        title: "Acesso à área de Gestão da WebApp", 
+        html: '<input id="adminEmail" class="swal2-input" placeholder="Insira o E-mail" type="e-mail">'+ 
+            '<input id="adminPassword" class="swal2-input" placeholder="Insira a paralvra pass" type="password">' ,
+            
+            showCancelButton: true,
+            confirmButtonText: "Inscrever",
+            cancelButtonText:"Cancelar",
+            showLoaderOnConfirm: true,
+            preConfirm:  async () => {
+                const emailAdmin = document.getElementById('adminEmail').value
+                const passwordAdmin = document.getElementById('adminPassword').value
+                const url_base = 'https://fcawebbook.herokuapp.com'
+                return fetch(`${url_base}/signin`, {
+                    headers: {"Content-Type" : "application/x-www-form-urlencoded"},
+                    method: "POST",
+                    body: `email=${emailAdmin}&password=${passwordAdmin}`
+                }).then(response => {
+                    if(!response.ok){
+                        throw new Error(response.statusText)
+                    }
+                    return response.json()
+                    
+                })
+                .catch(error => {
+                    swal.showValidationError(`Pedido falhou ${error}`)
+                });
+            },        
+            allowOutsideClick: () => !swal.isLoading()
+        }).then((result) => {
+            if (result.value) {
+                swal({title: "Inscrição feita com sucesso"})
+            } else {
+                swal({title : `${result.value.err_message}`})
+            }
+        });
+    })
