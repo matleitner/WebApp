@@ -122,9 +122,10 @@ const renderAuthors = async () => {
     }
 }
 
-const lougOutBtn = document.getElementById("logout")
-lougOutBtn.addEventListener("click", () => {
+const logoutBtn = document.getElementById("logoutBtn")
+logoutBtn.addEventListener("click", () => {
     sessionStorage.removeItem("token")
-
+    Window.close()
+    console.log("OLa")
 
 })
