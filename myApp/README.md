@@ -16,3 +16,10 @@ Testar como node js funciona,
 
 - Templates (Mustache)
 
+- Mecanismos de Armazenamento, cookies vs. sessões 
+
+- Funcionalidades de Login e E-mail, dependências `express, sequelize, mysql, passport, body-parser, express-session, passport-local e bcrypt`
+
+### Segurança 
+
+- SQL Injection 
